@@ -8,8 +8,8 @@ function c_cor = SOFT_DECODER_GROUPE1(c_ds_flip, H, P1_ds, MAX_ITER)
     q1 = zeros(numF, numC);
     q0 = zeros(numF, numC);
     for i = 1:length(q1)
-        Q1(i) = P1_ds(i);
-        Q0(i) = 1 - P1_ds(i);
+        Q1(i,1) = P1_ds(i);
+        Q0(i,1) = 1 - P1_ds(i);
         for j = 1:numF
             q1(j,i) = P1_ds(i);
             q0(j,i) = 1 - P1_ds(i);
@@ -25,6 +25,7 @@ function c_cor = SOFT_DECODER_GROUPE1(c_ds_flip, H, P1_ds, MAX_ITER)
     %fprintf('Q1: %s\n', mat2str(Q1));
     %fprintf('q0: %s\n', mat2str(q0));
     %fprintf('q1: %s\n', mat2str(q1));
+    %fprintf('r0: %s\n', mat2str(r0));
     %fprintf('c_est: %s\n', mat2str(c_est));
     %fprintf('Parity Check Fail: %d\n', parityCheckFail(c_est, H));
 
@@ -58,7 +59,7 @@ function c_cor = SOFT_DECODER_GROUPE1(c_ds_flip, H, P1_ds, MAX_ITER)
             for f = 1:numF
                 r_temp = zeros(numF,1);
                 for j = 1:numF
-                    if j ~= f
+                    if H(j, c) == 1 && j ~= f
                         r_temp(j,1) = r0(j,c);
                     end
                 end
@@ -70,7 +71,9 @@ function c_cor = SOFT_DECODER_GROUPE1(c_ds_flip, H, P1_ds, MAX_ITER)
         for c = 1:numC
             r_temp = zeros(numF,1);
             for f = 1:numF
-                r_temp(f,1) = r0(f,c);
+                if H(f, c) == 1
+                    r_temp(f,1) = r0(f,c);
+                end
             end
             [Q0(c,1), Q1(c,1)] = cal_q(P1_ds(c), r_temp);
         end
@@ -78,19 +81,19 @@ function c_cor = SOFT_DECODER_GROUPE1(c_ds_flip, H, P1_ds, MAX_ITER)
         c_est = estimate(Q0, Q1);
 
         %% debug
-        fprintf('Iteration %d:\n', i);
-        fprintf('Q0: %s\n', mat2str(Q0));
-        fprintf('Q1: %s\n', mat2str(Q1));
-        fprintf('q0: %s\n', mat2str(q0));
-        fprintf('q1: %s\n', mat2str(q1));
-        fprintf('r0: %s\n', mat2str(r0));
-        fprintf('c_est: %s\n', mat2str(c_est));
-        fprintf('Parity Check Fail: %d\n', parityCheckFail(c_est, H));
+        %fprintf('Iteration %d:\n', i);
+        %fprintf('Q0: %s\n', mat2str(Q0));
+        %fprintf('Q1: %s\n', mat2str(Q1));
+        %fprintf('q0: %s\n', mat2str(q0));
+        %fprintf('q1: %s\n', mat2str(q1));
+        %fprintf('r0: %s\n', mat2str(r0));
+        %fprintf('c_est: %s\n', mat2str(c_est));
+        %fprintf('Parity Check Fail: %d\n', parityCheckFail(c_est, H));
         
         i = i + 1;
     end
     
-    c_cor = logical(c_est);
+    c_cor = c_est;
 
 end
 
@@ -147,7 +150,7 @@ function c_est = estimate(Q0, Q1)
             c_temp(i) = 0;
         end
     end
-    c_est = c_temp;
+    c_est = logical(c_temp);
 end
 
 function condition = parityCheckFail(c_est, H)
