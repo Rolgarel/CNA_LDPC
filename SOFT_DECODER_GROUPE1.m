@@ -20,11 +20,13 @@ function c_cor = SOFT_DECODER_GROUPE1(c_ds_flip, H, P1_ds, MAX_ITER)
 
     %% debug
 
-    fprintf('Start:\n');
-    fprintf('Q0: %s\n', mat2str(Q0));
-    fprintf('Q1: %s\n', mat2str(Q1));
-    fprintf('c_est: %s\n', mat2str(c_est));
-    fprintf('Parity Check Fail: %d\n', parityCheckFail(c_est, H));
+    %fprintf('Start:\n');
+    %fprintf('Q0: %s\n', mat2str(Q0));
+    %fprintf('Q1: %s\n', mat2str(Q1));
+    %fprintf('q0: %s\n', mat2str(q0));
+    %fprintf('q1: %s\n', mat2str(q1));
+    %fprintf('c_est: %s\n', mat2str(c_est));
+    %fprintf('Parity Check Fail: %d\n', parityCheckFail(c_est, H));
 
     %for i = 1:MAX_ITER
         % boucle principale
@@ -56,7 +58,7 @@ function c_cor = SOFT_DECODER_GROUPE1(c_ds_flip, H, P1_ds, MAX_ITER)
             for y = 1:numF
                 r_temp = zeros(numF,1);
                 for n = 1:numF
-                    if H(y, n) == 1 && n ~= y
+                    if n ~= y
                         r_temp(n) = r0(n,j);
                     end
                 end
@@ -65,24 +67,25 @@ function c_cor = SOFT_DECODER_GROUPE1(c_ds_flip, H, P1_ds, MAX_ITER)
         end
 
         % update Q
-        for j = 1:numC
+        for c = 1:numC
             r_temp = zeros(numF,1);
-            for y = 1:numF
-                if H(y, j) == 1
-                    r_temp(y) = r0(y,j);
-                end
+            for f = 1:numF
+                r_temp(f) = r0(f,c);
             end
-            [Q0(y,j), Q1(y,j)] = cal_q(P1_ds(j), r_temp);
+            [Q0(c,1), Q1(c,1)] = cal_q(P1_ds(c), r_temp);
         end
         
         c_est = estimate(Q0, Q1);
 
         %% debug
-        fprintf('Iteration %d:\n', i);
-        fprintf('Q0: %s\n', mat2str(Q0));
-        fprintf('Q1: %s\n', mat2str(Q1));
-        fprintf('c_est: %s\n', mat2str(c_est));
-        fprintf('Parity Check Fail: %d\n', parityCheckFail(c_est, H));
+        %fprintf('Iteration %d:\n', i);
+        %fprintf('Q0: %s\n', mat2str(Q0));
+        %fprintf('Q1: %s\n', mat2str(Q1));
+        %fprintf('q0: %s\n', mat2str(q0));
+        %fprintf('q1: %s\n', mat2str(q1));
+        %fprintf('r0: %s\n', mat2str(r0));
+        %fprintf('c_est: %s\n', mat2str(c_est));
+        %fprintf('Parity Check Fail: %d\n', parityCheckFail(c_est, H));
         
         i = i + 1;
     end
