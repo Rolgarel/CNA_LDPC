@@ -16,6 +16,7 @@ function c_cor = SOFT_DECODER_GROUPE1__(c_ds_flip, H, P1_ds, MAX_ITER)
         end
     end
     r0 = zeros(numF, numC);
+    c_est = estimate(Q0,Q1);
 
     %for i = 1:MAX_ITER
         % boucle principale
@@ -55,7 +56,6 @@ function c_cor = SOFT_DECODER_GROUPE1__(c_ds_flip, H, P1_ds, MAX_ITER)
             end
         end
 
-        %condition ?
         % update Q
         for j = 1:numC
             r_temp = zeros(numF,1);
@@ -66,21 +66,12 @@ function c_cor = SOFT_DECODER_GROUPE1__(c_ds_flip, H, P1_ds, MAX_ITER)
             end
             [Q0(y,j), Q1(y,j)] = cal_q(P1_ds(j), r_temp);
         end
-
+        
+        c_est = estimate(Q0, Q1);
         i = i + 1;
     end
-
-    % finalisation (décision)
-    %c_temp = c_ds_flip;
-    %for i = 1:length(c_temp)
-        %if Q(i, 1) > Q(i, 2)
-            %c_temp(i) = 1;
-        %else
-            %c_temp(i) = 0;
-        %end
-    %end
     
-    %c_cor = c_temp;
+    c_cor = c_est;
 
 end
 
