@@ -1,5 +1,5 @@
 
-function c_cor = SOFT_DECODER_GROUPE1__(c_ds_flip, H, P1_ds, MAX_ITER)
+function c_cor = SOFT_DECODER_GROUPE1_(c_ds_flip, H, P1_ds, MAX_ITER)
     numC = length(H(1,:));
     numF = length(H(:,1));
 
@@ -26,7 +26,7 @@ function c_cor = SOFT_DECODER_GROUPE1__(c_ds_flip, H, P1_ds, MAX_ITER)
         %4 : update des q
     %end
     i = 1;
-    while i <= MAX_ITER && 1 %ajouter condition
+    while i <= MAX_ITER && parityCheckFail(c_est, H) %ajouter condition
         
         % modif : chaque f -> un r par c (dont il est exclu)
         % update r
@@ -131,4 +131,18 @@ function c_est = estimate(Q0, Q1)
     c_est = c_temp;
 end
 
-disp('ok')
+function condition = parityCheckFail(c_est, H)
+
+    M = mod(H*c_est, 2);
+    sum = 0;
+    for i = 1:length(M)
+        sum = sum + M(i);
+    end
+
+    if sum == 0
+        condition = 0;
+    else
+        condition = 1;
+    end
+
+end

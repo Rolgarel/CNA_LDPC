@@ -40,7 +40,7 @@ MAX_ITER = 100;
 
 % Loop for the tests
 fprintf('+--------------------------------------------------------------------------------------------------------------------------+\n')
-fprintf('| Tests\t|\tTrue == Flip\t|\tTrue == Hard\tTrue == Hard\t|\tHard == Hard (ref)\tSoft == Soft (ref) |\n')
+fprintf('| Tests\t|\tTrue == Flip\t|\tTrue == Hard\tTrue == Soft\t|\tHard == Hard (ref)\tSoft == Soft (ref) |\n')
 fprintf('+--------------------------------------------------------------------------------------------------------------------------+\n')
 for n = 1:N_data
     fprintf('| %5d\t|\t', n)
@@ -57,9 +57,9 @@ for n = 1:N_data
     % Run the decoders
     % Replace i with your group number.
     %c_hard = HARD_DECODER_GROUPE1(c_ds_flip, H, MAX_ITER);
-    %c_soft = SOFT_DECODER_GROUPE1(c_ds_flip, H, P1_ds, MAX_ITER);
+    c_soft = SOFT_DECODER_GROUPE1(c_ds_flip, H, P1_ds, MAX_ITER);
     c_hard = c_ds_true;
-    c_soft = c_ds_true;
+    %c_soft = c_ds_true;
     
     % Comparison with the flipped codeword
     fprintf('%12s\t|\t', string(isequal(c_ds_true , c_ds_flip)))
