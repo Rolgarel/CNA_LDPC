@@ -127,4 +127,17 @@ function q1 = cal_q1(p, r0)
     q1 = p*prod;
 end
 
+function c_est = estimate(Q0, Q1)
+    numC = length(Q0(:,1));
+    c_temp = zeros(numC, 1);
+    for i = 1:numC
+        if Q1(i) > Q0(i)
+            c_temp(i) = 1;
+        else
+            c_temp(i) = 0;
+        end
+    end
+    c_est = c_temp;
+end
+
 disp('ok')
