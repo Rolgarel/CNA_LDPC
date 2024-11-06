@@ -3,16 +3,18 @@ function c_cor = SOFT_DECODER_GROUPE1(c_ds_flip, H, P1_ds, MAX_ITER)
     numC = length(H(1,:));
     numF = length(H(:,1));
 
-    Q1 = zeros(numC,1);
-    Q0 = zeros(numC,1);
+    Q1 = [];
+    Q0 = [];
     q1 = zeros(numF, numC);
     q0 = zeros(numF, numC);
-    for i = 1:length(q1)
-        Q1(i,1) = P1_ds(i);
-        Q0(i,1) = 1 - P1_ds(i);
-        for j = 1:numF
-            q1(j,i) = P1_ds(i);
-            q0(j,i) = 1 - P1_ds(i);
+    for c = 1:numC
+        Q1 = [Q1, P1_ds(c)];
+        Q0 = [Q0, 1 - P1_ds(c)];
+        for f = 1:numF
+            if H(f, c) == 1
+                q1(f,c) = P1_ds(c);
+                q0(f,c) = 1 - P1_ds(c);
+            end
         end
     end
     r0 = zeros(numF, numC);
@@ -43,10 +45,10 @@ function c_cor = SOFT_DECODER_GROUPE1(c_ds_flip, H, P1_ds, MAX_ITER)
         % update r
         for f = 1:numF
             for c = 1:numC
-                q_temp = zeros(numC,1);
+                q_temp = [];
                 for j = 1:numC
                     if H(f, j) == 1 && j ~= c
-                        q_temp(j,1) = q1(f,j);
+                        q_temp = [q_temp, q1(f,j)];
                     end
                 end
                 [r0(f, c),~] = cal_r(q_temp);
@@ -57,10 +59,10 @@ function c_cor = SOFT_DECODER_GROUPE1(c_ds_flip, H, P1_ds, MAX_ITER)
         % update q
         for c = 1:numC
             for f = 1:numF
-                r_temp = zeros(numF,1);
+                r_temp = [];
                 for j = 1:numF
                     if H(j, c) == 1 && j ~= f
-                        r_temp(j,1) = r0(j,c);
+                        r_temp = [r_temp, r0(j,c)];
                     end
                 end
                 [q0(c,f), q1(c,f)] = cal_q(P1_ds(c), r_temp);
@@ -69,10 +71,10 @@ function c_cor = SOFT_DECODER_GROUPE1(c_ds_flip, H, P1_ds, MAX_ITER)
 
         % update Q
         for c = 1:numC
-            r_temp = zeros(numF,1);
+            r_temp = [];
             for f = 1:numF
                 if H(f, c) == 1
-                    r_temp(f,1) = r0(f,c);
+                    r_temp = [r_temp, r0(f,c)];
                 end
             end
             [Q0(c,1), Q1(c,1)] = cal_q(P1_ds(c), r_temp);
@@ -106,9 +108,7 @@ end
 function [r0, r1] = cal_r(q1)
     prod = 1;
     for i = 1:length(q1)
-        if q1(i) ~= 0
-            prod = prod*(1-2*q1(i));
-        end
+        prod = prod*(1-2*q1(i));
     end
     r0 = 1/2 + (1/2)*prod;
     r1 = 1 - r0;
@@ -123,9 +123,7 @@ end
 function q0 = cal_q0(p, r0)
     prod = 1;
     for i = 1:length(r0)
-        if r0(i) ~= 0
-            prod = prod*r0(i);
-        end
+        prod = prod*r0(i);
     end
     q0 = (1 - p)*prod;
 end
@@ -133,9 +131,7 @@ end
 function q1 = cal_q1(p, r0)
     prod = 1;
     for i = 1:length(r0)
-        if r0(i) ~= 0
-            prod = prod*(1 - r0(i));
-        end
+        prod = prod*(1 - r0(i));
     end
     q1 = p*prod;
 end
