@@ -178,7 +178,17 @@ function q1 = cal_q1(p, r0)
     q1 = p*prod;
 end
 
+
 function c_est = estimate(Q0, Q1)
+% ESTIMATE - Compute the estimation of the decoded codeword as for
+%            the current amount of belief in "0" and "1" of the variable-nodes
+%
+%   Parameters :
+%       Q0 : amount of belief in "0" according to the check-nodes
+%       Q1 : amount of belief in "1" according to the check-nodes
+%   Return :
+%       c_est : estimation of the decoded codeword
+
     numC = length(Q0(:,1));
     c_temp = zeros(numC, 1);
     for i = 1:numC
