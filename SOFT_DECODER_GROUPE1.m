@@ -9,13 +9,30 @@
 % =========================================================================
 
 function c_cor = SOFT_DECODER_GROUPE1(c_ds_flip, H, P1_ds, MAX_ITER)
-    numC = length(H(1,:));
-    numF = length(H(:,1));
+% SOFT_DECODER_GROUPE1 - Soft-decode a codeword encoded with an LDPC code
+%   
+%   Parameters :
+%       C_DS_FLIP  Flipped codeword to be decoded
+%       H          Parity-check matrix
+%       P1_DS      Initial probability of having "1" on variable-node i 
+%                  knowing y(i)
+%       MAX_ITER   Maximum number of iterations of the decoding process
+%   Return :
+%       C_COR      Decoded codeword
 
-    Q1 = [];
-    Q0 = [];
-    q1 = zeros(numF, numC);
-    q0 = zeros(numF, numC);
+    %% INITIALISE VARIABLES 
+
+    numC = length(H(1,:)); % number of variable-nodes
+    numF = length(H(:,1)); % number of check-nodes
+
+    
+    Q1 = []; % variable-nodes' amount of belief in "1"
+    Q0 = []; % variable-nodes' amount of belief in "0"
+
+    % Messages matrix from variable-nodes i to check-nodes j
+    q1 = zeros(numF, numC); % amount of belief in "1"
+    q0 = zeros(numF, numC); % amount of belief in "0"
+
     for c = 1:numC
         Q1 = [Q1, P1_ds(c)];
         Q0 = [Q0, 1 - P1_ds(c)];
@@ -26,8 +43,10 @@ function c_cor = SOFT_DECODER_GROUPE1(c_ds_flip, H, P1_ds, MAX_ITER)
             end
         end
     end
-    r0 = zeros(numF, numC);
-    c_est = c_ds_flip;
+
+    r0 = zeros(numF, numC); % check-nodes j responses to variable-nodes i
+    
+    c_est = c_ds_flip; % estimation of the decoded codeword
 
     %% debug
 
@@ -47,11 +66,15 @@ function c_cor = SOFT_DECODER_GROUPE1(c_ds_flip, H, P1_ds, MAX_ITER)
         %3 : r de f vers c
         %4 : update des q
     %end
+
+
+    %% MAIN DECODING LOOP
+
     i = 1;
     while i <= MAX_ITER && parityCheckFail(c_est, H)
         
         % modif : chaque f -> un r par c (dont il est exclu)
-        % update r
+        % Update r0 : responses from check-nodes to their variable-nodes
         for f = 1:numF
             for c = 1:numC
                 q_temp = [];
@@ -65,7 +88,7 @@ function c_cor = SOFT_DECODER_GROUPE1(c_ds_flip, H, P1_ds, MAX_ITER)
         end
 
         % modif : chaque c -> un q par f (dont il est exclu)
-        % update q
+        % Update q0 and q1 : messages from variable-nodes to their check-nodes
         for c = 1:numC
             for f = 1:numF
                 r_temp = [];
@@ -78,7 +101,7 @@ function c_cor = SOFT_DECODER_GROUPE1(c_ds_flip, H, P1_ds, MAX_ITER)
             end
         end
 
-        % update Q
+        % Update Q0 and Q1 : check-nodes' amount of belief in "0" and "1"
         for c = 1:numC
             r_temp = [];
             for f = 1:numF
@@ -89,7 +112,7 @@ function c_cor = SOFT_DECODER_GROUPE1(c_ds_flip, H, P1_ds, MAX_ITER)
             [Q0(c,1), Q1(c,1)] = cal_q(P1_ds(c), r_temp);
         end
         
-        c_est = estimate(Q0, Q1);
+        c_est = estimate(Q0, Q1); % estimation of the decoded codeword
 
         %% debug
         %fprintf('Iteration %d:\n', i);
@@ -104,7 +127,7 @@ function c_cor = SOFT_DECODER_GROUPE1(c_ds_flip, H, P1_ds, MAX_ITER)
         i = i + 1;
     end
     
-    c_cor = c_est;
+    c_cor = c_est; % final estimation of the decoded codeword
 
 end
 
