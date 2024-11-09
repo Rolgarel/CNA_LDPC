@@ -201,7 +201,16 @@ function c_est = estimate(Q0, Q1)
     c_est = logical(c_temp);
 end
 
+
 function condition = parityCheckFail(c_est, H)
+% parityCheckFail - Verify the parity equations represented by H for the
+%                   estimated decoded codeword
+%
+%   Parameters :
+%       H : parity-check matrix
+%       c_est : estimation of the decoded codeword
+%   Return :
+%       condition : 1 if at least one of the equations fails, 0 otherwise
 
     M = mod(H*c_est, 2);
     sum = 0;
