@@ -137,7 +137,17 @@ function [q0, q1] = norm_q(q0i, q1i)
     q1 = q1i / norm;
 end
 
+
 function [r0, r1] = cal_r(q1)
+% CAL_R - Compute r0 and r1, responses of check-nodes to variable nodes
+%   
+%   Parameters :
+%       q1 : varible-nodes' amount of belief in "1" sent to their 
+%            check-nodes
+%   Return :
+%       [r0, r1] : response of the check-nodes about their amount of belief 
+%                  in "0" and "1"
+
     prod = 1;
     for i = 1:length(q1)
         prod = prod*(1-2*q1(i));
