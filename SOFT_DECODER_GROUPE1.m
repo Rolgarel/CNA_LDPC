@@ -1,3 +1,12 @@
+%% SOFT_DEC0DER_GROUPE1.m
+% =========================================================================
+% *Authors:* Raphaël DEMBIK, Camille ROBINSON, Pierre-Angelo PEYRIE
+% *Date:* 2024, Novembre
+% =========================================================================
+% This script is an implementation of the LDPC soft decoder.
+% It contains the function that implement the decoder and a number
+% of sub-functions used in the main function.
+% =========================================================================
 
 function c_cor = SOFT_DECODER_GROUPE1(c_ds_flip, H, P1_ds, MAX_ITER)
     numC = length(H(1,:));
