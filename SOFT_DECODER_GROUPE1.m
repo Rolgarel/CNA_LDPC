@@ -73,7 +73,6 @@ function c_cor = SOFT_DECODER_GROUPE1(c_ds_flip, H, P1_ds, MAX_ITER)
     i = 1;
     while i <= MAX_ITER && parityCheckFail(c_est, H)
         
-        % modif : chaque f -> un r par c (dont il est exclu)
         % Update r0 : responses from check-nodes to their variable-nodes
         for f = 1:numF
             for c = 1:numC
@@ -87,7 +86,6 @@ function c_cor = SOFT_DECODER_GROUPE1(c_ds_flip, H, P1_ds, MAX_ITER)
             end
         end
 
-        % modif : chaque c -> un q par f (dont il est exclu)
         % Update q0 and q1 : messages from variable-nodes to their check-nodes
         for c = 1:numC
             for f = 1:numF
@@ -147,37 +145,23 @@ function [r0, r1] = cal_r(q1)
 %   Return :
 %       [r0, r1] : response of the check-nodes about their amount of belief 
 %                  in "0" and "1"
-
-    prod = 1;
-    for i = 1:length(q1)
-        prod = prod*(1-2*q1(i));
-    end
-    r0 = 1/2 + (1/2)*prod;
+    r0 = 1/2 + (1/2)*prod(1-2*q1);
     r1 = 1 - r0;
 end
 
 function [q0, q1] = cal_q(p, r0)
-    q0i = cal_q0(p, r0);
-    q1i = cal_q1(p, r0);
+%Cal_Q - Compute q0 and q1, queries of variable nodes to check-nodes
+%
+%   Parameters :
+%       r0 : response of the check-nodes about their amount of belief 
+%            in "0"
+%   Return :
+%       [q0, q1] : varible-nodes' amount of belief in "0" and "1" sent to 
+%       their check-nodes          
+    q0i = (1 - p)*prod(r0);
+    q1i = p*prod(1 - r0); % r1 = 1 - r0
     [q0, q1] = norm_q(q0i, q1i);
 end
-
-function q0 = cal_q0(p, r0)
-    prod = 1;
-    for i = 1:length(r0)
-        prod = prod*r0(i);
-    end
-    q0 = (1 - p)*prod;
-end
-
-function q1 = cal_q1(p, r0)
-    prod = 1;
-    for i = 1:length(r0)
-        prod = prod*(1 - r0(i));
-    end
-    q1 = p*prod;
-end
-
 
 function c_est = estimate(Q0, Q1)
 % ESTIMATE - Compute the estimation of the decoded codeword as for
@@ -213,12 +197,8 @@ function condition = parityCheckFail(c_est, H)
 %       condition : 1 if at least one of the equations fails, 0 otherwise
 
     M = mod(H*c_est, 2);
-    sum = 0;
-    for i = 1:length(M)
-        sum = sum + M(i);
-    end
 
-    if sum == 0
+    if sum(M) == 0
         condition = 0;
     else
         condition = 1;
