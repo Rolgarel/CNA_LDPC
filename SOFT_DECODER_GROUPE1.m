@@ -59,14 +59,6 @@ function c_cor = SOFT_DECODER_GROUPE1(c_ds_flip, H, P1_ds, MAX_ITER)
     %fprintf('c_est: %s\n', mat2str(c_est));
     %fprintf('Parity Check Fail: %d\n', parityCheckFail(c_est, H));
 
-    %for i = 1:MAX_ITER
-        % boucle principale
-        %1 : q de c vers f
-        %2 : calcul r
-        %3 : r de f vers c
-        %4 : update des q
-    %end
-
 
     %% MAIN DECODING LOOP
 
