@@ -68,26 +68,30 @@ function c_cor = SOFT_DECODER_GROUPE1(c_ds_flip, H, P1_ds, MAX_ITER)
         % Update r0 : responses from check-nodes to their variable-nodes
         for f = 1:numF
             for c = 1:numC
-                q_temp = [];
-                for j = 1:numC
-                    if H(f, j) == 1 && j ~= c
-                        q_temp = [q_temp, q1(f,j)];
+                if H(f, c) == 1
+                    q_temp = [];
+                    for j = 1:numC
+                        if H(f, j) == 1 && j ~= c
+                            q_temp = [q_temp, q1(f,j)];
+                        end
                     end
+                    [r0(f, c),~] = cal_r(q_temp);
                 end
-                [r0(f, c),~] = cal_r(q_temp);
             end
         end
 
         % Update q0 and q1 : messages from variable-nodes to their check-nodes
         for c = 1:numC
             for f = 1:numF
-                r_temp = [];
-                for j = 1:numF
-                    if H(j, c) == 1 && j ~= f
-                        r_temp = [r_temp, r0(j,c)];
+                if H(f, c) == 1
+                    r_temp = [];
+                    for j = 1:numF
+                        if H(j, c) == 1 && j ~= f
+                            r_temp = [r_temp, r0(j,c)];
+                        end
                     end
+                    [q0(f,c), q1(f,c)] = cal_q(P1_ds(c), r_temp);
                 end
-                [q0(c,f), q1(c,f)] = cal_q(P1_ds(c), r_temp);
             end
         end
 
