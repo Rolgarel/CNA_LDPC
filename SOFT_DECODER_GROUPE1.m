@@ -48,18 +48,7 @@ function c_cor = SOFT_DECODER_GROUPE1(c_ds_flip, H, P1_ds, MAX_ITER)
     
     c_est = c_ds_flip; % estimation of the decoded codeword
 
-    %% debug
-
-    %fprintf('Start:\n');
-    %fprintf('Q0: %s\n', mat2str(Q0));
-    %fprintf('Q1: %s\n', mat2str(Q1));
-    %fprintf('q0: %s\n', mat2str(q0));
-    %fprintf('q1: %s\n', mat2str(q1));
-    %fprintf('r0: %s\n', mat2str(r0));
-    %fprintf('c_est: %s\n', mat2str(c_est));
-    %fprintf('Parity Check Fail: %d\n', parityCheckFail(c_est, H));
-
-
+    
     %% MAIN DECODING LOOP
 
     i = 1;
@@ -107,16 +96,6 @@ function c_cor = SOFT_DECODER_GROUPE1(c_ds_flip, H, P1_ds, MAX_ITER)
         end
         
         c_est = estimate(Q0, Q1); % estimation of the decoded codeword
-
-        %% debug
-        %fprintf('Iteration %d:\n', i);
-        %fprintf('Q0: %s\n', mat2str(Q0));
-        %fprintf('Q1: %s\n', mat2str(Q1));
-        %fprintf('q0: %s\n', mat2str(q0));
-        %fprintf('q1: %s\n', mat2str(q1));
-        %fprintf('r0: %s\n', mat2str(r0));
-        %fprintf('c_est: %s\n', mat2str(c_est));
-        %fprintf('Parity Check Fail: %d\n', parityCheckFail(c_est, H));
         
         i = i + 1;
     end
